@@ -13,7 +13,7 @@ data_path = "/mnt/storage_dimm2/kaggle_data/rsna-intracranial-hemorrhage-detecti
 
 
 def get_metadata(image_dir):
-
+//data reading
     labels = [
         'BitsAllocated', 'BitsStored', 'Columns', 'HighBit',
         'ImageOrientationPatient_0', 'ImageOrientationPatient_1', 'ImageOrientationPatient_2',
@@ -33,7 +33,7 @@ def get_metadata(image_dir):
         ds = pydicom.dcmread(os.path.join(image_dir, image))
 
         for metadata in ds.dir():
-            if metadata != "PixelData":
+            if metadata != "PixelData": // data without pixel data(image data)
                 metadata_values = getattr(ds, metadata)
                 if type(metadata_values) == pydicom.multival.MultiValue and metadata not in ["WindowCenter", "WindowWidth"]:
                     for i, v in enumerate(metadata_values):
@@ -48,7 +48,7 @@ def get_metadata(image_dir):
 
 
 def build_triplets(metadata):
-    metadata.sort_values(by="ImagePositionPatient_2", inplace=True, ascending=False)
+    metadata.sort_values(by="ImagePositionPatient_2", inplace=True, ascending=False)//why 2?
     studies = metadata.groupby("StudyInstanceUID")
     triplets = []
 
@@ -64,7 +64,7 @@ def build_triplets(metadata):
 
 class CropHead(object):
     def __init__(self, offset=10):
-        """
+        """//설명그대로 background image를 날려주는 작업
         Crops the head by labelling the objects in an image and keeping the second largest object (the largest object
         is the background). This method removes most of the headrest
 
